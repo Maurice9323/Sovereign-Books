@@ -123,13 +123,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .history-type{font-size:7px;font-weight:700;letter-spacing:0.5px;padding:1px 5px;border-radius:2px;text-transform:uppercase;margin-left:5px;}
 .type-main{background:var(--faint);color:var(--dim);}
 .type-cultural{background:var(--cult-l);color:#C49A6A;}
-.type-black{background:var(--blk-l);color:#4AAA96;}
+.type-bcl{background:var(--blk-l);color:#4AAA96;}
 .history-empty{font-size:10px;color:var(--dim);font-style:italic;padding:10px 0;}
 .error-box{background:rgba(196,106,106,0.08);border:1px solid rgba(196,106,106,0.25);border-radius:3px;padding:12px 14px;font-size:10px;color:#C46A6A;line-height:1.5;}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#B8962E">
-<link rel="apple-touch-icon" href="icon-192 2.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 <div class="hdr">
@@ -139,7 +139,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
   </div>
   <div class="hdr-right">
     <div>Arc-aligned · Stat-targeted</div>
-    <div>Cultural Lens · Black Culture</div>
+    <div>Cultural Lens · Black Cultural Lens</div>
     <div><strong>Verified · AI-Powered</strong></div>
   </div>
 </div>
@@ -323,13 +323,13 @@ ${statLines}
 PREVIOUSLY SUGGESTED BOOKS (avoid lazy repeats — reframe arcFit specifically for current stats/mode if reusing):
 ${histAll}
 
-Return a single JSON object with exactly three keys: "main", "cultural", "blackCulture".
+Return a single JSON object with exactly three keys: "main", "cultural", "blackCulturalLens".
 
 "main": Array of exactly ${cnt} objects: {"title":string,"author":string,"track":"GOOD"|"BAD"|"UGLY","stats":string[],"arcFit":"1-2 sentences specific to THIS mode and stats","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
 
 "cultural": 1 object from art, history, literature, fiction, poetry, biography, philosophy — genuine cultural or intellectual weight, NOT self-help or business. Thematic bridge to arc/mode must be justifiable. GRIND: obsession/craft narratives. GHOST: espionage/political history/quiet power. FLOW: contemplative/integrative works. SIEGE: war literature/tragedy/survival. {"title":string,"author":string,"genre":string,"stats":string[],"arcFit":"1-2 sentences — thematic connection valid","justification":"One sentence: specific bridge between this work and current focus","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
 
-"blackCulture": 1 object where (1) author is Black — verifiable identity; (2) Black cultural perspective, experience, or intellectual tradition is actively present in the work — not incidental authorship, the lens must shape the content; (3) any genre that best fits arc/stats/mode; (4) substance and staying power. {"title":string,"author":string,"track":"GOOD"|"BAD"|"UGLY","genre":string,"stats":string[],"arcFit":"1-2 sentences. Note identity confidence if MODERATE.","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
+"blackCulturalLens": 1 object where (1) author is Black — verifiable identity; (2) Black cultural perspective, experience, or intellectual tradition is actively present in the work — not incidental authorship, the lens must shape the content; (3) any genre that best fits arc/stats/mode; (4) substance and staying power. {"title":string,"author":string,"track":"GOOD"|"BAD"|"UGLY","genre":string,"stats":string[],"arcFit":"1-2 sentences. Note identity confidence if MODERATE.","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
 
 RULES: Prioritize longevity and credibility. Favor primary sources. Avoid one-idea-stretched-to-250-pages books. HIGH=verified classic. MEDIUM=certain it exists. MODERATE=user should verify. Cultural: must have genuine literary/historical/artistic weight. BlackCulture: cultural lens must shape the content, not just the authorship.
 
@@ -346,7 +346,7 @@ Return ONLY valid JSON. No markdown, no backticks, no preamble.`;
     try{parsed=JSON.parse(clean.slice(s,en+1));}
     catch(pe){console.error('Raw:',raw.slice(0,2000));throw new Error('Response was not valid JSON. Try again — if it keeps failing, reduce book count.');}
     showLoad('Verifying books…','Checking Open Library and Google Books');
-    const all=[...(parsed.main||[]),parsed.cultural,parsed.blackCulture].filter(Boolean);
+    const all=[...(parsed.main||[]),parsed.cultural,parsed.blackCulturalLens].filter(Boolean);
     await Promise.all(all.map(async b=>{b.verified=await verifyBook(b.title,b.author);}));
     renderResults(parsed);addToHistory(parsed);
   }catch(err){showError(`Generation failed: ${err.message}`);}
@@ -364,7 +364,7 @@ function cardHTML(b,fitCls,extraBadge){
 
 function renderResults(data){
   const panel=document.getElementById('resultsPanel'),body=document.getElementById('resultsBody');
-  const tot=(data.main||[]).length+(data.cultural?1:0)+(data.blackCulture?1:0);
+  const tot=(data.main||[]).length+(data.cultural?1:0)+(data.blackCulturalLens?1:0);
   const tl=` · ${arc.track}`;
   document.getElementById('resultsLabel').textContent=`${arc.mode}${tl} · ${tot} Total`;
   panel.style.display='block';
@@ -372,8 +372,8 @@ function renderResults(data){
   (data.main||[]).forEach(b=>{h+=cardHTML(b,'','');});
   h+=`<div class="section-divider divider-cult"><div class="section-divider-line"></div><span class="section-divider-label">Cultural Lens</span><div class="section-divider-line"></div></div>`;
   if(data.cultural)h+=cardHTML(data.cultural,'cult-fit','<span class="badge badge-cult">Cultural</span>');
-  h+=`<div class="section-divider divider-blk"><div class="section-divider-line"></div><span class="section-divider-label">Black Culture</span><div class="section-divider-line"></div></div>`;
-  if(data.blackCulture)h+=cardHTML(data.blackCulture,'blk-fit','<span class="badge badge-blk">Black Culture</span>');
+  h+=`<div class="section-divider divider-blk"><div class="section-divider-line"></div><span class="section-divider-label">Black Cultural Lens</span><div class="section-divider-line"></div></div>`;
+  if(data.blackCulturalLens)h+=cardHTML(data.blackCulturalLens,'blk-fit','<span class="badge badge-blk">Black Cultural Lens</span>');
   body.innerHTML=h;panel.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function clearResults(){document.getElementById('resultsPanel').style.display='none';document.getElementById('resultsBody').innerHTML='';}
@@ -391,7 +391,7 @@ function addToHistory(data){
     const tv=(b.track&&b.track!=='undefined')?b.track:'—';
     if(!ex)hist.push({title:b.title,author:b.author,track:tv,type,date:new Date().toLocaleDateString()});
   };
-  (data.main||[]).forEach(b=>add(b,'main'));add(data.cultural,'cultural');add(data.blackCulture,'black');
+  (data.main||[]).forEach(b=>add(b,'main'));add(data.cultural,'cultural');add(data.blackCulturalLens,'bcl');
   localStorage.setItem(SH,JSON.stringify(hist));renderHistory();
 }
 function renderHistory(){
