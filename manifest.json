@@ -1,9 +1,25 @@
 {
-  "name": "The Wheel",
-  "short_name": "The Wheel",
-  "start_url": "/the-wheel/",
+  "name": "Sovereign Book Intelligence",
+  "short_name": "Book Intel",
+  "description": "Arc-aligned, stat-targeted book suggestions for the Sovereign system.",
+  "start_url": "/Sovereign-BookIntel/",
+  "scope": "/Sovereign-BookIntel/",
   "display": "standalone",
-  "background_color": "#05050e",
-  "theme_color": "#05050e",
-  "icons": []
+  "background_color": "#0E0E0C",
+  "theme_color": "#B8962E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
