@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVEREIGN — Book Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#B8962E;--gold-l:#D4AA44;--gold-glow:rgba(184,150,46,0.15);
+  --dark:#0E0E0C;--card:#161614;--card2:#1C1C1A;
+  --border:#252522;--border2:#2E2E2A;--border3:#3A3A36;
+  --text:#E8E0D0;--muted:#8E8E93;--dim:#555552;--faint:#333330;
+  --good:#4A8C5C;--good-l:rgba(74,140,92,0.12);--good-b:rgba(74,140,92,0.25);
+  --bad:#C49A1A;--bad-l:rgba(196,154,26,0.12);--bad-b:rgba(196,154,26,0.25);
+  --ugly:#7A4A9C;--ugly-l:rgba(122,74,156,0.12);--ugly-b:rgba(122,74,156,0.25);
+  --cult:#8C6A3A;--cult-l:rgba(140,106,58,0.12);--cult-b:rgba(140,106,58,0.3);--cult-glow:rgba(140,106,58,0.12);
+  --blk:#2A7A6A;--blk-l:rgba(42,122,106,0.12);--blk-b:rgba(42,122,106,0.3);--blk-glow:rgba(42,122,106,0.12);
+  --ver-c:#6ABD84;--ver-bg:rgba(74,140,92,0.15);--ver-b:rgba(74,140,92,0.3);
+  --unv-c:#C46A6A;--unv-bg:rgba(196,106,106,0.12);--unv-b:rgba(196,106,106,0.3);
+}
+html{background:var(--dark);}
+body{background:var(--dark);color:var(--text);font-family:'Source Serif 4',Georgia,serif;min-height:100vh;padding:24px 20px 60px;max-width:900px;margin:0 auto;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:999;}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border2);}
+.hdr-sys{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.hdr-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--text);}
+.hdr-title span{color:var(--gold);}
+.hdr-right{text-align:right;font-size:9px;color:var(--dim);line-height:1.8;}
+.hdr-right strong{color:var(--gold);}
+.panel{background:var(--card);border:1px solid var(--border2);border-radius:4px;margin-bottom:14px;overflow:hidden;}
+.panel-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card2);}
+.panel-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.panel-body{padding:14px;}
+.arc-display{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.arc-chip{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:3px 10px;border-radius:2px;text-transform:uppercase;}
+.arc-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-right:4px;}
+.arc-empty{font-size:11px;color:var(--dim);font-style:italic;}
+.arc-meta{font-size:9px;color:var(--dim);margin-top:6px;font-style:italic;}
+
+.mode-GRIND{background:rgba(196,74,42,0.18);color:#E86A4A;border:1px solid rgba(196,74,42,0.3);}
+.mode-GHOST{background:rgba(42,106,140,0.18);color:#4A9AC4;border:1px solid rgba(42,106,140,0.3);}
+.mode-FLOW{background:rgba(74,140,92,0.18);color:#6ABD84;border:1px solid rgba(74,140,92,0.3);}
+.mode-SIEGE{background:rgba(140,42,42,0.18);color:#C46A6A;border:1px solid rgba(140,42,42,0.3);}
+.track-GOOD{background:var(--good-l);color:var(--good);border:1px solid var(--good-b);}
+.track-BAD{background:var(--bad-l);color:var(--bad);border:1px solid var(--bad-b);}
+.track-UGLY{background:var(--ugly-l);color:var(--ugly);border:1px solid var(--ugly-b);}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.form-group.grow{flex:1;}
+label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);font-weight:600;}
+select,input[type=text],input[type=password],textarea{background:var(--card2);border:1px solid var(--border2);color:var(--text);font-family:'Source Serif 4',Georgia,serif;font-size:11px;padding:7px 10px;border-radius:3px;outline:none;transition:border-color .15s;width:100%;}
+select:focus,input:focus,textarea:focus{border-color:var(--gold);}
+select option{background:#1C1C1A;}
+textarea{resize:vertical;min-height:52px;line-height:1.5;}
+.arc-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.arc-form .full{grid-column:1/-1;}
+.mode-desc{font-size:9px;color:var(--dim);margin-top:4px;font-style:italic;min-height:14px;}
+.key-note{font-size:9px;color:var(--dim);margin-top:6px;font-style:italic;}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:4px;}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:var(--border3);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--gold);border-radius:50%;cursor:pointer;}
+.slider-val{font-size:11px;font-weight:600;color:var(--gold);min-width:28px;text-align:right;}
+.stat-entry{background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:12px;margin-bottom:8px;}
+.stat-entry-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.remove-stat{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;transition:color .15s;}
+.remove-stat:hover{color:#C46A6A;}
+.btn{font-family:'Source Serif 4',Georgia,serif;font-size:10px;font-weight:600;letter-spacing:0.5px;padding:8px 16px;border-radius:3px;border:none;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.btn-gold{background:var(--gold);color:#0E0E0C;}
+.btn-gold:hover{background:var(--gold-l);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-danger{background:transparent;color:#C46A6A;border:1px solid rgba(196,106,106,0.3);}
+.btn-danger:hover{background:rgba(196,106,106,0.1);}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-sm{padding:5px 10px;font-size:9px;}
+.count-row{display:flex;gap:6px;align-items:center;}
+.count-btn{background:var(--card2);border:1px solid var(--border2);color:var(--muted);font-size:10px;font-weight:700;padding:5px 14px;border-radius:3px;cursor:pointer;transition:all .15s;font-family:'Source Serif 4',serif;}
+.count-btn.active{background:var(--gold-glow);border-color:var(--gold);color:var(--gold);}
+.count-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-right:4px;}
+.generate-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--card2);border-top:1px solid var(--border);}
+.loading{text-align:center;padding:40px 20px;}
+.loading-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--muted);margin-bottom:8px;}
+.loading-sub{font-size:9px;color:var(--dim);letter-spacing:0.5px;}
+.spinner{width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.results-hdr{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card2);display:flex;justify-content:space-between;align-items:center;}
+.section-divider{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.section-divider-line{flex:1;height:1px;}
+.section-divider-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;padding:3px 10px;border-radius:2px;}
+.divider-cult .section-divider-line{background:var(--cult-b);}
+.divider-cult .section-divider-label{color:var(--cult);background:var(--cult-l);border:1px solid var(--cult-b);}
+.divider-blk .section-divider-line{background:var(--blk-b);}
+.divider-blk .section-divider-label{color:var(--blk);background:var(--blk-l);border:1px solid var(--blk-b);}
+.book-card{padding:16px 14px;border-bottom:1px solid var(--border);}
+.book-card:last-child{border-bottom:none;}
+.book-card:hover{background:var(--card2);}
+.book-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.book-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:2px;}
+.book-author{font-size:10px;color:var(--muted);font-style:italic;}
+.book-badges{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.badge{font-size:7.5px;font-weight:700;letter-spacing:0.5px;padding:2px 7px;border-radius:2px;text-transform:uppercase;white-space:nowrap;}
+.badge-verified{background:var(--ver-bg);color:var(--ver-c);border:1px solid var(--ver-b);}
+.badge-unverified{background:var(--unv-bg);color:var(--unv-c);border:1px solid var(--unv-b);}
+.conf-HIGH{background:rgba(74,140,92,0.08);color:#4A7A58;border:1px solid rgba(74,140,92,0.2);font-size:7px;}
+.conf-MEDIUM{background:rgba(184,150,46,0.08);color:#8A7020;border:1px solid rgba(184,150,46,0.2);font-size:7px;}
+.conf-MODERATE{background:rgba(140,100,42,0.08);color:#8A6020;border:1px solid rgba(140,100,42,0.2);font-size:7px;}
+.badge-cult{background:var(--cult-l);color:#C49A6A;border:1px solid var(--cult-b);}
+.badge-blk{background:var(--blk-l);color:#4AAA96;border:1px solid var(--blk-b);}
+.book-stats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.stat-tag{font-size:8px;color:var(--dim);padding:2px 6px;background:var(--faint);border-radius:2px;}
+.book-arc-fit{font-size:10px;color:var(--gold);line-height:1.5;margin-bottom:7px;padding:7px 10px;background:var(--gold-glow);border-left:2px solid var(--gold);border-radius:0 2px 2px 0;}
+.cult-fit{color:#C49A6A;background:var(--cult-glow);border-left-color:var(--cult);}
+.blk-fit{color:#4AAA96;background:var(--blk-glow);border-left-color:var(--blk);}
+.book-desc{font-size:10.5px;color:var(--muted);line-height:1.6;}
+.unverified-note{font-size:9px;color:var(--unv-c);margin-top:6px;font-style:italic;}
+.history-list{padding:10px 14px;}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+.history-item:last-child{border-bottom:none;}
+.history-title{font-size:10px;color:var(--muted);}
+.history-meta{font-size:8px;color:var(--dim);}
+.history-type{font-size:7px;font-weight:700;letter-spacing:0.5px;padding:1px 5px;border-radius:2px;text-transform:uppercase;margin-left:5px;}
+.type-main{background:var(--faint);color:var(--dim);}
+.type-cultural{background:var(--cult-l);color:#C49A6A;}
+.type-black{background:var(--blk-l);color:#4AAA96;}
+.history-empty{font-size:10px;color:var(--dim);font-style:italic;padding:10px 0;}
+.error-box{background:rgba(196,106,106,0.08);border:1px solid rgba(196,106,106,0.25);border-radius:3px;padding:12px 14px;font-size:10px;color:#C46A6A;line-height:1.5;}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#B8962E">
+</head>
+<body>
+<div class="hdr">
+  <div>
+    <div class="hdr-sys">Sovereign System</div>
+    <div class="hdr-title">Book <span>Intelligence</span></div>
+  </div>
+  <div class="hdr-right">
+    <div>Arc-aligned · Stat-targeted</div>
+    <div>Cultural Lens · Black Culture</div>
+    <div><strong>Verified · AI-Powered</strong></div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-hdr">
+    <span class="panel-label">Arc Context</span>
+    <button class="btn btn-ghost btn-sm" onclick="toggleArcEdit()">Edit Arc</button>
+  </div>
+  <div class="panel-body" id="arcDisplay"><div class="arc-empty">No arc set — configure your arc context to begin.</div></div>
+  <div class="panel-body" id="arcEditForm" style="display:none;">
+    <div class="arc-form">
+      <div class="form-group full"><label>Arc Name</label><input type="text" id="arcName" placeholder="e.g. Arc 1 — Security" maxlength="60"></div>
+      <div class="form-group">
+        <label>Arc Mode</label>
+        <select id="arcMode" onchange="updateModeDesc()">
+          <option value="">Select mode…</option>
+          <option value="GRIND">GRIND</option><option value="GHOST">GHOST</option>
+          <option value="FLOW">FLOW</option><option value="SIEGE">SIEGE</option>
+        </select>
+        <div class="mode-desc" id="modeDesc"></div>
+      </div>
+      <div class="form-group">
+        <label>Primary Track</label>
+        <select id="arcTrack">
+          <option value="">Select track…</option>
+          <option value="GOOD">GOOD</option><option value="BAD">BAD</option><option value="UGLY">UGLY</option>
+        </select>
+      </div>
+
+      <div class="form-group full"><label>API Key</label><input type="password" id="apiKey" placeholder="sk-ant-…"><div class="key-note">Stored locally. Same key used by your other Sovereign tools.</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn btn-gold" onclick="saveArc()">Save Arc</button>
+      <button class="btn btn-ghost" onclick="cancelArcEdit()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-hdr">
+    <span class="panel-label">Stats to Level</span>
+    <button class="btn btn-ghost btn-sm" onclick="addStat()">+ Add Stat</button>
+  </div>
+  <div class="panel-body">
+    <div id="statEntries"></div>
+    <div id="statEmpty" style="font-size:10px;color:var(--dim);font-style:italic;">Add at least one stat to generate suggestions.</div>
+  </div>
+  <div class="generate-row">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span class="count-label">Main Suggestions</span>
+      <div class="count-row">
+        <button class="count-btn" data-count="3" onclick="setCount(3)">3</button>
+        <button class="count-btn active" data-count="5" onclick="setCount(5)">5</button>
+        <button class="count-btn" data-count="7" onclick="setCount(7)">7</button>
+      </div>
+    </div>
+    <button class="btn btn-gold" id="generateBtn" onclick="generate()" disabled>Generate All</button>
+  </div>
+</div>
+
+<div class="panel" id="resultsPanel" style="display:none;">
+  <div class="results-hdr">
+    <span id="resultsLabel">Suggestions</span>
+    <button class="btn btn-ghost btn-sm" onclick="clearResults()">Clear</button>
+  </div>
+  <div id="resultsBody"></div>
+</div>
+
+<div class="panel">
+  <div class="panel-hdr">
+    <span class="panel-label">Suggested History</span>
+    <button class="btn btn-danger btn-sm" onclick="clearHistory()">Clear All</button>
+  </div>
+  <div class="history-list" id="historyList"><div class="history-empty">No books suggested yet.</div></div>
+</div>
+
+<script>
+const SA=('sovereign_book_arc'),SH=('sovereign_book_history'),SK=('antihero_api_key');
+let arc=JSON.parse(localStorage.getItem(SA)||'null');
+let hist=JSON.parse(localStorage.getItem(SH)||'[]');
+let cnt=5,sidC=0,statE=[];
+const STATS={
+  GOOD:['Discipline','Work Ethic','Reliability','Consistency','Integrity','Humility','Accountability','Trust Capital','Physical Health','Family Commitment','Public Likability','Generosity','Mentorship'],
+  BAD:['Social Boldness','Risk','Rebellion','Vice Mastery','Ambition','Seduction','Cunning','Profiling','Machiavellianism','Shadow Networking','Stealth','Secrecy','Emotional Leverage'],
+  UGLY:['Power Mapping & Awareness','Manipulation Literacy','Information Control','Cold Decisions','Emotional Detachment','Strategy & Long-term Planning','Exploitation & Patience','Exit Strategies','Existential Resilience','Hedonism','Seduction & Influence'],
+  CORE:['Willpower (Core)','Emotional Control (Core)','Provider Capacity (Core)','Stability (Core)','Legacy (Core)']
+};
+const ST={};Object.entries(STATS).forEach(([t,ss])=>ss.forEach(s=>ST[s]=t));
+const MD={GRIND:'Maximum output — high intensity, peak performance, relentless execution.',GHOST:'Stealth accumulation — low visibility, silent moves, building leverage quietly.',FLOW:'Sustainable rhythm — integration, maintenance, consolidating gains.',SIEGE:'Crisis response — containment, focused defense, execution under pressure.'};
+
+function renderArcDisplay(){
+  const d=document.getElementById('arcDisplay');
+  if(!arc){d.innerHTML='<div class="arc-empty">No arc configured — click Edit Arc to begin.</div>';return;}
+
+  d.innerHTML=`<div class="arc-display"><span class="arc-name">${e(arc.name)||'Unnamed Arc'}</span><span class="arc-chip mode-${arc.mode}">${arc.mode}</span><span class="arc-chip track-${arc.track}">${arc.track}</span></div><div class="arc-meta">${MD[arc.mode]||''}</div>`;
+}
+function toggleArcEdit(){
+  const f=document.getElementById('arcEditForm'),d=document.getElementById('arcDisplay');
+  if(f.style.display==='none'){
+    document.getElementById('arcName').value=arc?.name||'';
+    document.getElementById('arcMode').value=arc?.mode||'';
+    document.getElementById('arcTrack').value=arc?.track||'';
+
+    document.getElementById('apiKey').value=localStorage.getItem(SK)||'';
+    updateModeDesc();
+    f.style.display='block';d.style.display='none';
+  }else{f.style.display='none';d.style.display='block';}
+}
+function cancelArcEdit(){document.getElementById('arcEditForm').style.display='none';document.getElementById('arcDisplay').style.display='block';}
+function saveArc(){
+  const name=document.getElementById('arcName').value.trim();
+  const mode=document.getElementById('arcMode').value;
+  const track=document.getElementById('arcTrack').value;
+  const key=document.getElementById('apiKey').value.trim();
+  if(!mode||!track){alert('Please select a mode and primary track.');return;}
+  arc={name,mode,track};
+  localStorage.setItem(SA,JSON.stringify(arc));
+  if(key)localStorage.setItem(SK,key);
+  cancelArcEdit();renderArcDisplay();checkReady();
+}
+function updateModeDesc(){document.getElementById('modeDesc').textContent=MD[document.getElementById('arcMode').value]||'';}
+
+function buildSel(v){
+  let h='<option value="">Select stat…</option>';
+  Object.entries(STATS).forEach(([g,ss])=>{h+=`<optgroup label="── ${g==='CORE'?'Core Stats':g+' Track'}">`;ss.forEach(s=>{h+=`<option value="${s}"${s===v?' selected':''}>${s}</option>`;});h+='</optgroup>';});
+  return h;
+}
+function addStat(ex){
+  const id=++sidC,en=ex||{id,stat:'',level:50,note:''};
+  if(!ex)statE.push(en);
+  document.getElementById('statEmpty').style.display='none';
+  const div=document.createElement('div');div.className='stat-entry';div.id=`stat-${id}`;
+  const tr=ST[en.stat]||'GOOD';
+  div.innerHTML=`<div class="stat-entry-hdr"><span class="badge track-${tr}" id="badge-${id}">${tr} Track</span><button class="remove-stat" onclick="rmStat(${id})">×</button></div><div class="form-group"><label>Stat</label><select onchange="onSC(${id},this.value)">${buildSel(en.stat)}</select></div><div class="form-group"><label>Current Level — <span id="sv-${id}">${en.level}</span></label><div class="slider-row"><input type="range" min="0" max="100" value="${en.level}" oninput="onLC(${id},this.value)"><span class="slider-val" id="sn-${id}">${en.level}</span></div></div><div class="form-group"><label>Focus Note (optional)</label><textarea placeholder="e.g. Strong on theory but struggle applying under stress…" oninput="onNC(${id},this.value)">${en.note||''}</textarea></div>`;
+  document.getElementById('statEntries').appendChild(div);checkReady();
+}
+function onSC(id,v){const en=statE.find(x=>x.id===id);if(en)en.stat=v;const t=ST[v]||'';const b=document.getElementById(`badge-${id}`);b.className=`badge track-${t||'GOOD'}`;b.textContent=t?`${t} Track`:'— Track';checkReady();}
+function onLC(id,v){const en=statE.find(x=>x.id===id);if(en)en.level=parseInt(v);document.getElementById(`sv-${id}`).textContent=v;document.getElementById(`sn-${id}`).textContent=v;}
+function onNC(id,v){const en=statE.find(x=>x.id===id);if(en)en.note=v;}
+function rmStat(id){statE=statE.filter(x=>x.id!==id);const el=document.getElementById(`stat-${id}`);if(el)el.remove();if(!statE.length)document.getElementById('statEmpty').style.display='block';checkReady();}
+function checkReady(){document.getElementById('generateBtn').disabled=!(arc&&statE.some(x=>x.stat)&&localStorage.getItem(SK));}
+function setCount(n){cnt=n;document.querySelectorAll('.count-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.count)===n));}
+
+async function verifyBook(title,author){
+  const norm=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,'').trim();
+  const tn=norm(title),ts=tn.slice(0,18);
+  try{
+    const ctrl=new AbortController(),t=setTimeout(()=>ctrl.abort(),6000);
+    const r=await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&limit=5&fields=title,author_name`,{signal:ctrl.signal});
+    clearTimeout(t);
+    if(r.ok){const d=await r.json();if(d.numFound>0&&d.docs?.length){const m=d.docs.some(doc=>{const t2=norm(doc.title||'');return t2.includes(ts)||tn.includes(t2.slice(0,18));});if(m)return'VERIFIED';}}
+  }catch(e){}
+  try{
+    const ctrl=new AbortController(),t=setTimeout(()=>ctrl.abort(),6000);
+    const q=encodeURIComponent(`intitle:${title} inauthor:${author}`);
+    const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=5`,{signal:ctrl.signal});
+    clearTimeout(t);
+    if(r.ok){const d=await r.json();if(d.totalItems>0&&d.items?.length){const m=d.items.some(i=>{const t2=norm(i.volumeInfo?.title||'');return t2.includes(ts)||tn.includes(t2.slice(0,18));});if(m)return'VERIFIED';}}
+  }catch(e){}
+  return'UNVERIFIED';
+}
+
+async function generate(){
+  const key=localStorage.getItem(SK);if(!key||!arc)return;
+  const as=statE.filter(x=>x.stat);if(!as.length)return;
+  showLoad('Searching the stacks…','Reasoning across your arc, mode, tracks, and stat gaps');
+  const histAll=hist.slice(-80).map(b=>`"${b.title}" by ${b.author} [${b.type}]`).join(', ')||'None yet';
+  const statLines=as.map(x=>`- ${x.stat} (${ST[x.stat]||'?'} Track), level ${x.level}/100${x.note?` — ${x.note}`:''}`).join('\n');
+  const trackLine=`Track: ${arc.track}`;
+  const prompt=`You are a book curator for the Sovereign personal development system — a 41-stat, three-track life RPG framework.
+
+ARC CONTEXT:
+- Arc: ${arc.name||'Unnamed Arc'}
+- Mode: ${arc.mode} — ${MD[arc.mode]}
+- ${trackLine}
+
+STATS TO LEVEL:
+${statLines}
+
+PREVIOUSLY SUGGESTED BOOKS (avoid lazy repeats — reframe arcFit specifically for current stats/mode if reusing):
+${histAll}
+
+Return a single JSON object with exactly three keys: "main", "cultural", "blackCulture".
+
+"main": Array of exactly ${cnt} objects: {"title":string,"author":string,"track":"GOOD"|"BAD"|"UGLY","stats":string[],"arcFit":"1-2 sentences specific to THIS mode and stats","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
+
+"cultural": 1 object from art, history, literature, fiction, poetry, biography, philosophy — genuine cultural or intellectual weight, NOT self-help or business. Thematic bridge to arc/mode must be justifiable. GRIND: obsession/craft narratives. GHOST: espionage/political history/quiet power. FLOW: contemplative/integrative works. SIEGE: war literature/tragedy/survival. {"title":string,"author":string,"genre":string,"stats":string[],"arcFit":"1-2 sentences — thematic connection valid","justification":"One sentence: specific bridge between this work and current focus","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
+
+"blackCulture": 1 object where (1) author is Black — verifiable identity; (2) Black cultural perspective, experience, or intellectual tradition is actively present in the work — not incidental authorship, the lens must shape the content; (3) any genre that best fits arc/stats/mode; (4) substance and staying power. {"title":string,"author":string,"track":"GOOD"|"BAD"|"UGLY","genre":string,"stats":string[],"arcFit":"1-2 sentences. Note identity confidence if MODERATE.","description":"1-2 concise sentences","confidence":"HIGH"|"MEDIUM"|"MODERATE"}
+
+RULES: Prioritize longevity and credibility. Favor primary sources. Avoid one-idea-stretched-to-250-pages books. HIGH=verified classic. MEDIUM=certain it exists. MODERATE=user should verify. Cultural: must have genuine literary/historical/artistic weight. BlackCulture: cultural lens must shape the content, not just the authorship.
+
+Return ONLY valid JSON. No markdown, no backticks, no preamble.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err?.error?.message||`API error ${res.status}`);}
+    const data=await res.json();
+    const raw=data.content?.find(b=>b.type==='text')?.text||'';
+    let clean=raw.replace(/```json[\s\S]*?```/g,m=>m.slice(m.indexOf('\n')+1,m.lastIndexOf('```'))).replace(/```/g,'').trim();
+    const s=clean.indexOf('{'),en=clean.lastIndexOf('}');
+    if(s===-1||en===-1)throw new Error('No JSON found. Try again.');
+    let parsed;
+    try{parsed=JSON.parse(clean.slice(s,en+1));}
+    catch(pe){console.error('Raw:',raw.slice(0,2000));throw new Error('Response was not valid JSON. Try again — if it keeps failing, reduce book count.');}
+    showLoad('Verifying books…','Checking Open Library and Google Books');
+    const all=[...(parsed.main||[]),parsed.cultural,parsed.blackCulture].filter(Boolean);
+    await Promise.all(all.map(async b=>{b.verified=await verifyBook(b.title,b.author);}));
+    renderResults(parsed);addToHistory(parsed);
+  }catch(err){showError(`Generation failed: ${err.message}`);}
+}
+
+function cardHTML(b,fitCls,extraBadge){
+  const vb=b.verified==='VERIFIED'?`<span class="badge badge-verified">✓ Verified</span>`:`<span class="badge badge-unverified">⚠ Unverified</span>`;
+  const cb=`<span class="badge conf-${b.confidence}">${b.confidence}</span>`;
+  const tb=b.track?`<span class="badge track-${b.track}">${b.track}</span>`:'';
+  const st=(b.stats||[]).map(s=>`<span class="stat-tag">${e(s)}</span>`).join('');
+  const un=b.verified==='UNVERIFIED'?`<div class="unverified-note">⚠ Could not verify — confirm this title exists before purchasing.</div>`:'';
+  const jl=b.justification&&b.justification!==b.arcFit?`<div class="book-arc-fit ${fitCls}" style="margin-top:6px;opacity:0.8;font-style:italic;">${e(b.justification)}</div>`:'';
+  return`<div class="book-card"><div class="book-top"><div><div class="book-title">${e(b.title)}</div><div class="book-author">${e(b.author)}${b.genre?` · <em>${e(b.genre)}</em>`:''}</div></div><div class="book-badges">${vb}${tb}${extraBadge}${cb}</div></div>${st?`<div class="book-stats">${st}</div>`:''}<div class="book-arc-fit ${fitCls}">${e(b.arcFit)}</div>${jl}<div class="book-desc">${e(b.description)}</div>${un}</div>`;
+}
+
+function renderResults(data){
+  const panel=document.getElementById('resultsPanel'),body=document.getElementById('resultsBody');
+  const tot=(data.main||[]).length+(data.cultural?1:0)+(data.blackCulture?1:0);
+  const tl=` · ${arc.track}`;
+  document.getElementById('resultsLabel').textContent=`${arc.mode}${tl} · ${tot} Total`;
+  panel.style.display='block';
+  let h='';
+  (data.main||[]).forEach(b=>{h+=cardHTML(b,'','');});
+  h+=`<div class="section-divider divider-cult"><div class="section-divider-line"></div><span class="section-divider-label">Cultural Lens</span><div class="section-divider-line"></div></div>`;
+  if(data.cultural)h+=cardHTML(data.cultural,'cult-fit','<span class="badge badge-cult">Cultural</span>');
+  h+=`<div class="section-divider divider-blk"><div class="section-divider-line"></div><span class="section-divider-label">Black Culture</span><div class="section-divider-line"></div></div>`;
+  if(data.blackCulture)h+=cardHTML(data.blackCulture,'blk-fit','<span class="badge badge-blk">Black Culture</span>');
+  body.innerHTML=h;panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function clearResults(){document.getElementById('resultsPanel').style.display='none';document.getElementById('resultsBody').innerHTML='';}
+function showLoad(title,sub){
+  const p=document.getElementById('resultsPanel');document.getElementById('resultsLabel').textContent=title;p.style.display='block';
+  document.getElementById('resultsBody').innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-title">${e(title)}</div><div class="loading-sub">${e(sub)}</div></div>`;
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function showError(msg){document.getElementById('resultsLabel').textContent='Error';document.getElementById('resultsPanel').style.display='block';document.getElementById('resultsBody').innerHTML=`<div class="panel-body"><div class="error-box">${e(msg)}</div></div>`;}
+
+function addToHistory(data){
+  const add=(b,type)=>{
+    if(!b?.title)return;
+    const ex=hist.find(h=>h.title===b.title&&h.author===b.author);
+    const tv=(b.track&&b.track!=='undefined')?b.track:'—';
+    if(!ex)hist.push({title:b.title,author:b.author,track:tv,type,date:new Date().toLocaleDateString()});
+  };
+  (data.main||[]).forEach(b=>add(b,'main'));add(data.cultural,'cultural');add(data.blackCulture,'black');
+  localStorage.setItem(SH,JSON.stringify(hist));renderHistory();
+}
+function renderHistory(){
+  const list=document.getElementById('historyList');
+  if(!hist.length){list.innerHTML='<div class="history-empty">No books suggested yet.</div>';return;}
+  list.innerHTML=[...hist].reverse().map(b=>`<div class="history-item"><div><div class="history-title">${e(b.title)} <span style="color:var(--dim);font-style:italic;">— ${e(b.author)}</span><span class="history-type type-${b.type}">${b.type}</span></div><div class="history-meta">${(b.track&&b.track!=='—'&&b.track!=='undefined')?b.track+' · ':''}${b.date}</div></div></div>`).join('');
+}
+function clearHistory(){if(!confirm('Clear all book history? Cannot be undone.'))return;hist=[];localStorage.setItem(SH,JSON.stringify(hist));renderHistory();}
+
+function e(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+(function(){renderArcDisplay();renderHistory();if(!arc)toggleArcEdit();checkReady();})();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js');
+    });
+  }
+</script>
+</body>
+</html>
